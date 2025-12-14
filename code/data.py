@@ -21,8 +21,8 @@ mode = args.mode
 logfile = args.logfile
 
 # 初始化日志
-os.makedirs('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/log', exist_ok=True)
-log = Logger(f'/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/log/{logfile}').logger
+os.makedirs('./user_data/log', exist_ok=True)
+log = Logger(f'./user_data/log/{logfile}').logger
 log.info(f'数据处理，mode: {mode}')
 
 
@@ -93,10 +93,10 @@ def data_offline(df_train_click, df_test_click):
     log.debug(f'{df_click.head()}')
 
     # 保存文件
-    os.makedirs('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/offline', exist_ok=True)
+    os.makedirs('./user_data/data/offline', exist_ok=True)
 
-    df_click.to_pickle('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/offline/click.pkl')
-    df_query.to_pickle('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/offline/query.pkl')
+    df_click.to_pickle('./user_data/data/offline/click.pkl')
+    df_query.to_pickle('./user_data/data/offline/query.pkl')
 
 
 def data_online(df_train_click, df_test_click):
@@ -124,16 +124,16 @@ def data_online(df_train_click, df_test_click):
     log.debug(f'{df_click.head()}')
 
     # 保存文件
-    os.makedirs('/home/wangtiantian/shikainan/newscommemder/top2wk/data/online', exist_ok=True)
+    os.makedirs('./user_data/data/online', exist_ok=True)
 
-    df_click.to_pickle('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/online/click.pkl')
-    df_query.to_pickle('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/online/query.pkl')
+    df_click.to_pickle('./user_data/data/online/click.pkl')
+    df_query.to_pickle('./user_data/data/online/query.pkl')
 
 
 if __name__ == '__main__':
-    df_train_click = pd.read_csv('/home/wangtiantian/shikainan/newswork/data/train_click_log.csv')
-    df_test_click = pd.read_csv('/home/wangtiantian/shikainan/newswork/data/testA_click_log.csv')
-    os.makedirs('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/offline', exist_ok=True)
+    df_train_click = pd.read_csv('./data/train_click_log.csv')
+    df_test_click = pd.read_csv('./data/testA_click_log.csv')
+    os.makedirs('./user_data/data/offline', exist_ok=True)
 
     log.debug(
         f'df_train_click shape: {df_train_click.shape}, df_test_click shape: {df_test_click.shape}'

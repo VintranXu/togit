@@ -29,8 +29,8 @@ mode = args.mode
 logfile = args.logfile
 
 # 初始化日志
-os.makedirs('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/log', exist_ok=True)
-log = Logger(f'/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/log/{logfile}').logger
+os.makedirs('./user_data/log', exist_ok=True)
+log = Logger(f'./user_data/log/{logfile}').logger
 log.info(f'排序特征，mode: {mode}')
 
 
@@ -126,12 +126,12 @@ def func_w2w_last_sim(x):
 
 if __name__ == '__main__':
     if mode == 'valid':
-        df_feature = pd.read_pickle('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/offline/recall.pkl')
-        df_click = pd.read_pickle('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/offline/click.pkl')
+        df_feature = pd.read_pickle('./user_data/data/offline/recall.pkl')
+        df_click = pd.read_pickle('./user_data/data/offline/click.pkl')
 
     else:
-        df_feature = pd.read_pickle('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/online/recall.pkl')
-        df_click = pd.read_pickle('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/online/click.pkl')
+        df_feature = pd.read_pickle('./user_data/data/online/recall.pkl')
+        df_click = pd.read_pickle('./user_data/data/online/click.pkl')
 
 
     # 文章特征
@@ -143,7 +143,7 @@ if __name__ == '__main__':
     # df_click: [user_id, click_article_id, timestamp]
     # df_feature: [user_id, article_id, label, sim_score]
     # df_article: [article_id,  category_id, created_at_ts, words_count]
-    df_article = pd.read_csv('/home/wangtiantian/shikainan/newswork/data/articles.csv')
+    df_article = pd.read_csv('./data/articles.csv')
 
 
     #将时间戳除以1000
@@ -464,11 +464,11 @@ if __name__ == '__main__':
     user_item_dict = dict(zip(user_item_['user_id'], user_item_['article_id']))
 
     if mode == 'valid':
-        f = open('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/sim/offline/itemcf_sim.pkl', 'rb')
+        f = open('./user_data/sim/offline/itemcf_sim.pkl', 'rb')
         item_sim = pickle.load(f)
         f.close()
     else:
-        f = open('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/sim/online/itemcf_sim.pkl', 'rb')
+        f = open('./user_data/sim/online/itemcf_sim.pkl', 'rb')
         item_sim = pickle.load(f)
         f.close()
 
@@ -518,11 +518,11 @@ if __name__ == '__main__':
 
     ## w2v 相关
     if mode == 'valid':
-        f = open('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/offline/article_w2v.pkl', 'rb')
+        f = open('./user_data/data/offline/article_w2v.pkl', 'rb')
         article_vec_map = pickle.load(f)
         f.close()
     else:
-        f = open('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/online/article_w2v.pkl', 'rb')
+        f = open('./user_data/data/online/article_w2v.pkl', 'rb')
         article_vec_map = pickle.load(f)
         f.close()
 
@@ -552,7 +552,7 @@ if __name__ == '__main__':
 
     # 保存特征文件
     if mode == 'valid':
-        df_feature.to_pickle('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/offline/feature.pkl')
+        df_feature.to_pickle('./user_data/data/offline/feature.pkl')
 
     else:
-        df_feature.to_pickle('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/online/feature.pkl')
+        df_feature.to_pickle('./user_data/data/online/feature.pkl')

@@ -53,8 +53,8 @@ args = parser.parse_args()
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 # 初始化日志
-os.makedirs('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/log', exist_ok=True)
-log = Logger(f'/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/log/{args.logfile}').logger
+os.makedirs('./user_data/log', exist_ok=True)
+log = Logger(f'./user_data/log/{args.logfile}').logger
 log.info(f'YouTube DNN模型训练开始，mode: {args.mode}, device: {device}')
 log.info(f'训练参数: {vars(args)}')
 
@@ -261,18 +261,22 @@ def train_model(model, train_loader, val_loader, epochs, learning_rate, patience
 def main():
     # 数据路径设置
     if args.mode == 'valid':
-        data_path = '/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/offline'
-        model_dir = '/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/model/offline'
+        data_path = './user_data/data/offline'
+        model_dir = './user_data/model/offline'
     else:
-        data_path = '/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/online'  
-        model_dir = '/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/model/online'
+        data_path = './user_data/data/online'  
+        model_dir = './user_data/model/online'
     
     os.makedirs(model_dir, exist_ok=True)
     
-    # 模型和编码器保存路径
+    # ========== 模型和编码器保存路径 ==========
+    # 训练后会生成3个文件:
+    # 1. youtube_dnn.pth: 模型权重 (state_dict)
+    # 2. encoders.pkl: 用户和物品的LabelEncoder,用于ID编解码
+    # 3. model_config.pkl: 模型配置字典 (user_num, item_num等)
     model_path = os.path.join(model_dir, 'youtube_dnn.pth')
     encoders_path = os.path.join(model_dir, 'encoders.pkl')
-    config_path = os.path.join(model_dir, 'model_config.pkl')
+    config_path = os.path.join(model_dir, 'model_config.pkl')  # ← 在第351行生成
     
     # 读取数据
     click_path = os.path.join(data_path, 'click.pkl')
@@ -333,28 +337,35 @@ def main():
         args.patience
     )
     
-    # 保存模型、编码器和配置
+    # ========== 保存模型、编码器和配置 ==========
     log.info("保存模型...")
+    
+    # 1. 保存模型权重 (youtube_dnn.pth)
     torch.save(model.state_dict(), model_path)
     
+    # 2. 保存编码器 (encoders.pkl)
+    # user_encoder: 将原始user_id映射为连续整数的编码器
+    # item_encoder: 将原始item_id映射为连续整数的编码器
     with open(encoders_path, 'wb') as f:
         pickle.dump((user_encoder, item_encoder), f)
     
-    # 保存模型配置，供召回时使用
+    # 3. 保存模型配置 (model_config.pkl) - 供召回时使用
+    # ★★★ 这就是 model_config.pkl 生成的地方! ★★★
     model_config = {
-        'user_num': len(user_encoder.classes_),
-        'item_num': len(item_encoder.classes_),
-        'embedding_dim': args.embedding_dim,
-        'hidden_units': args.hidden_units,
-        'max_seq_len': args.max_seq_len,
+        'user_num': len(user_encoder.classes_),      # 训练数据中不重复的用户数
+        'item_num': len(item_encoder.classes_),      # 训练数据中不重复的物品数
+        'embedding_dim': args.embedding_dim,         # embedding维度
+        'hidden_units': args.hidden_units,           # DNN隐藏层单元数列表
+        'max_seq_len': args.max_seq_len,            # 历史序列最大长度
     }
     
+    # 将配置字典序列化保存为 pkl 文件
     with open(config_path, 'wb') as f:
-        pickle.dump(model_config, f)
+        pickle.dump(model_config, f)  # 生成 model_config.pkl
     
     log.info(f"模型保存到: {model_path}")
     log.info(f"编码器保存到: {encoders_path}")
-    log.info(f"配置保存到: {config_path}")
+    log.info(f"配置保存到: {config_path}")  # config_path = 'model_config.pkl'
     log.info("训练完成!")
 
 

@@ -29,8 +29,8 @@ mode = args.mode
 logfile = args.logfile
 
 # 初始化日志
-os.makedirs('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/log', exist_ok=True)
-log = Logger(f'/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/log/{logfile}').logger
+os.makedirs('./user_data/log', exist_ok=True)
+log = Logger(f'./user_data/log/{logfile}').logger
 log.info(f'lightgbm 排序，mode: {mode}')
 
 
@@ -156,7 +156,7 @@ def train_model(df_feature, df_query):
         })
         df_importance_list.append(df_importance)
 
-        joblib.dump(model, f'/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/model/lgb{fold_id}.pkl')
+        joblib.dump(model, f'./user_data/model/lgb{fold_id}.pkl')
 
     # 特征重要性
     df_importance = pd.concat(df_importance_list)
@@ -214,7 +214,7 @@ def predict_with_saved_models(df_feature, df_query=None):
     # 检查模型文件是否存在
     model_files_exist = True
     for fold_id in range(5):
-        model_path = f'/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/model/lgb{fold_id}.pkl'
+        model_path = f'./user_data/model/lgb{fold_id}.pkl'
         if not os.path.exists(model_path):
             log.error(f"模型文件不存在: {model_path}")
             model_files_exist = False
@@ -228,7 +228,7 @@ def predict_with_saved_models(df_feature, df_query=None):
     
     # 加载模型并预测
     for fold_id in tqdm(range(5), desc="加载模型并预测"):
-        model_path = f'/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/model/lgb{fold_id}.pkl'
+        model_path = f'./user_data/model/lgb{fold_id}.pkl'
         log.info(f"加载模型: {model_path}")
         
         model = joblib.load(model_path)
@@ -245,7 +245,7 @@ def predict_with_saved_models(df_feature, df_query=None):
         oof_predictions = []
         
         for fold_id in range(5):
-            model = joblib.load(f'/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/model/lgb{fold_id}.pkl')
+            model = joblib.load(f'./user_data/model/lgb{fold_id}.pkl')
             pred_train = model.predict_proba(df_train[feature_names])[:, 1]
             
             df_oof = df_train[['user_id', 'article_id', ycol]].copy()
@@ -271,8 +271,8 @@ def predict_with_saved_models(df_feature, df_query=None):
     df_sub = gen_sub(prediction)
     df_sub.sort_values(['user_id'], inplace=True)
     
-    os.makedirs('/home/wangtiantian/shikainan/newscommemder/top2wk/prediction_result', exist_ok=True)
-    output_path = f'/home/wangtiantian/shikainan/newscommemder/top2wk/prediction_result/result_loaded.csv'
+    os.makedirs('./prediction_result', exist_ok=True)
+    output_path = f'./prediction_result/result_loaded.csv'
     df_sub.to_csv(output_path, index=False)
     log.info(f"预测结果已保存到: {output_path}")
     
@@ -291,15 +291,15 @@ def online_predict(df_test):
     prediction['pred'] = 0
 
     for fold_id in tqdm(range(5)):
-        model = joblib.load(f'/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/model/lgb{fold_id}.pkl')
+        model = joblib.load(f'./user_data/model/lgb{fold_id}.pkl')
         pred_test = model.predict_proba(df_test[feature_names])[:, 1]
         prediction['pred'] += pred_test / 5
 
     # 生成提交文件
     df_sub = gen_sub(prediction)
     df_sub.sort_values(['user_id'], inplace=True)
-    os.makedirs('/home/wangtiantian/shikainan/newscommemder/top2wk/prediction_result', exist_ok=True)
-    df_sub.to_csv(f'/home/wangtiantian/shikainan/newscommemder/top2wk/prediction_result/result.csv', index=False)
+    os.makedirs('./prediction_result', exist_ok=True)
+    df_sub.to_csv(f'./prediction_result/result.csv', index=False)
 
 
 if __name__ == '__main__':
@@ -317,8 +317,8 @@ if __name__ == '__main__':
         user_last_click_article_w2v_sim(当前文章与用户过去看的文章所有的emebdding相似度之和), user_click_article_w2w_sim_sum_2(当前文章与用户上次看的2篇文章的emebdding相似度之和)
         """
         # 加载特征数据以及查询数据
-        df_feature = pd.read_pickle('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/offline/feature.pkl')
-        df_query = pd.read_pickle('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/offline/query.pkl')
+        df_feature = pd.read_pickle('./user_data/data/offline/feature.pkl')
+        df_query = pd.read_pickle('./user_data/data/offline/query.pkl')
         # 找出所有包含文本数据的列
         for f in df_feature.select_dtypes('object').columns:
             lbl = LabelEncoder()
@@ -333,8 +333,8 @@ if __name__ == '__main__':
         log.info("运行纯预测模式...")
         
         # 自动检测使用哪个特征文件
-        offline_feature_path = '/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/offline/feature.pkl'
-        online_feature_path = '/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/online/feature.pkl'
+        offline_feature_path = './user_data/data/offline/feature.pkl'
+        online_feature_path = './user_data/data/online/feature.pkl'
         
         if os.path.exists(offline_feature_path):
             log.info(f"使用离线特征文件: {offline_feature_path}")
@@ -342,7 +342,7 @@ if __name__ == '__main__':
             
             # 尝试加载查询数据用于评估
             try:
-                df_query = pd.read_pickle('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/offline/query.pkl')
+                df_query = pd.read_pickle('./user_data/data/offline/query.pkl')
             except:
                 df_query = None
                 log.warning("无法加载查询数据，跳过评估指标计算")
@@ -361,6 +361,6 @@ if __name__ == '__main__':
         # 使用保存的模型进行预测
         predict_with_saved_models(df_feature, df_query)
     else:
-        df_feature = pd.read_pickle('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/online/feature.pkl')
+        df_feature = pd.read_pickle('./user_data/data/online/feature.pkl')
         online_predict(df_feature)
     

@@ -49,7 +49,30 @@ log.info(f'召回参数: {vars(args)}')
 
 
 def load_model_and_encoders(model_dir):
-    """加载训练好的模型和编码器"""
+    """
+    加载训练好的模型和编码器
+    
+    加载流程:
+    1. 从 model_config.pkl 加载模型配置(包含 user_num, item_num 等)
+    2. 从 encoders.pkl 加载 LabelEncoder (用于ID编解码)
+    3. 使用配置重建模型结构
+    4. 从 youtube_dnn.pth 加载模型权重
+    
+    user_num 来源:
+    - 训练阶段(trainDNN.py): 
+      user_num = len(user_encoder.classes_)  # 统计训练数据中不重复的用户数
+    - 保存到 model_config.pkl 中
+    - 召回阶段: 从 model_config.pkl 读取
+    
+    参数:
+        model_dir: 模型文件目录
+        
+    返回:
+        model: 加载好权重的YouTubeDNN模型
+        user_encoder: 用户ID编码器 (原始user_id <-> 编码后的整数)
+        item_encoder: 物品ID编码器 (原始item_id <-> 编码后的整数)
+        model_config: 模型配置字典
+    """
     model_path = os.path.join(model_dir, 'youtube_dnn.pth')
     encoders_path = os.path.join(model_dir, 'encoders.pkl')
     config_path = os.path.join(model_dir, 'model_config.pkl')
@@ -59,18 +82,29 @@ def load_model_and_encoders(model_dir):
         missing = [p for p in [model_path, encoders_path, config_path] if not os.path.exists(p)]
         raise FileNotFoundError(f"缺少模型文件: {missing}")
     
-    # 加载配置
+    # ========== 1. 加载模型配置 ==========
+    # model_config 包含:
+    # - user_num: 训练数据中的用户总数 (len(user_encoder.classes_))
+    # - item_num: 训练数据中的物品总数 (len(item_encoder.classes_))
+    # - embedding_dim: embedding维度
+    # - hidden_units: DNN隐藏层单元数列表
+    # - max_seq_len: 历史序列最大长度
     with open(config_path, 'rb') as f:
         model_config = pickle.load(f)
     
-    # 加载编码器
+    # ========== 2. 加载编码器 ==========
+    # user_encoder: sklearn LabelEncoder,将原始user_id映射为0,1,2,...
+    # item_encoder: sklearn LabelEncoder,将原始item_id映射为0,1,2,...
+    # 注意: 训练时编码后的ID会+1,让0作为padding专用
     with open(encoders_path, 'rb') as f:
         user_encoder, item_encoder = pickle.load(f)
     
-    # 重建模型
+    # ========== 3. 重建模型结构 ==========
+    # 使用训练时保存的配置重建模型
+    # user_num 就是从这里读取的!
     model = YouTubeDNN(
-        user_num=model_config['user_num'],
-        item_num=model_config['item_num'],
+        user_num=model_config['user_num'],  # 从配置文件加载的用户总数
+        item_num=model_config['item_num'],  # 从配置文件加载的物品总数
         embedding_dim=model_config['embedding_dim'],
         hidden_units=model_config['hidden_units']
     )

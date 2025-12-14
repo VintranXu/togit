@@ -166,9 +166,9 @@ def gen_sub_multitasking(test_users, prediction, all_articles, worker_id):
 
         lines.append([test_user] + items)
 
-    os.makedirs('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/tmp/sub', exist_ok=True)
+    os.makedirs('./user_data/tmp/sub', exist_ok=True)
 
-    with open(f'/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/tmp/sub/{worker_id}.pkl', 'wb') as f:
+    with open(f'./user_data/tmp/sub/{worker_id}.pkl', 'wb') as f:
         pickle.dump(lines, f)
 
 
@@ -179,7 +179,7 @@ def gen_sub(prediction):
 
     all_articles = set(prediction['article_id'].values)
 
-    sub_sample = pd.read_csv('/home/wangtiantian/shikainan/newswork/data/testA_click_log.csv')
+    sub_sample = pd.read_csv('./data/testA_click_log.csv')
     test_users = sub_sample.user_id.unique()
 
     n_split = max_threads
@@ -187,7 +187,7 @@ def gen_sub(prediction):
     n_len = total // n_split
 
     # 清空临时文件夹
-    for path, _, file_list in os.walk('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/tmp/sub'):
+    for path, _, file_list in os.walk('./user_data/tmp/sub'):
         for file_name in file_list:
             os.remove(os.path.join(path, file_name))
 
@@ -198,7 +198,7 @@ def gen_sub(prediction):
     multitasking.wait_for_tasks()
 
     lines = []
-    for path, _, file_list in os.walk('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/tmp/sub'):
+    for path, _, file_list in os.walk('./user_data/tmp/sub'):
         for file_name in file_list:
             with open(os.path.join(path, file_name), 'rb') as f:
                 line = pickle.load(f)

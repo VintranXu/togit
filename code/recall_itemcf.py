@@ -33,8 +33,8 @@ mode = args.mode
 logfile = args.logfile
 
 # 初始化日志
-os.makedirs('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/log', exist_ok=True)
-log = Logger(f'/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/log/{logfile}').logger
+os.makedirs('./user_data/log', exist_ok=True)
+log = Logger(f'./user_data/log/{logfile}').logger
 log.info(f'itemcf 召回，mode: {mode}')
 
 
@@ -136,25 +136,25 @@ def recall(df_query, item_sim, user_item_dict, worker_id):
 
     df_data = pd.concat(data_list, sort=False)
 
-    os.makedirs('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/tmp/itemcf', exist_ok=True)
+    os.makedirs('./user_data/tmp/itemcf', exist_ok=True)
 
     #并行存储召回结果
-    df_data.to_pickle(f'/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/tmp/itemcf/{worker_id}.pkl')
+    df_data.to_pickle(f'./user_data/tmp/itemcf/{worker_id}.pkl')
 
 
 if __name__ == '__main__':
     if mode == 'valid':
-        df_click = pd.read_pickle('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/offline/click.pkl')
-        df_query = pd.read_pickle('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/offline/query.pkl')
+        df_click = pd.read_pickle('./user_data/data/offline/click.pkl')
+        df_query = pd.read_pickle('./user_data/data/offline/query.pkl')
 
-        os.makedirs('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/sim/offline', exist_ok=True)
-        sim_pkl_file = '/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/sim/offline/itemcf_sim.pkl'
+        os.makedirs('./user_data/sim/offline', exist_ok=True)
+        sim_pkl_file = './user_data/sim/offline/itemcf_sim.pkl'
     else:
-        df_click = pd.read_pickle('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/online/click.pkl')
-        df_query = pd.read_pickle('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/online/query.pkl')
+        df_click = pd.read_pickle('./user_data/data/online/click.pkl')
+        df_query = pd.read_pickle('./user_data/data/online/query.pkl')
 
-        os.makedirs('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/sim/online', exist_ok=True)
-        sim_pkl_file = '/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/sim/online/itemcf_sim.pkl'
+        os.makedirs('./user_data/sim/online', exist_ok=True)
+        sim_pkl_file = './user_data/sim/online/itemcf_sim.pkl'
 
     log.debug(f'df_click shape: {df_click.shape}')
     log.debug(f'{df_click.head()}')
@@ -179,7 +179,7 @@ if __name__ == '__main__':
     n_len = total // n_split
 
     # 清空临时文件夹
-    for path, _, file_list in os.walk('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/tmp/itemcf'):
+    for path, _, file_list in os.walk('./user_data/tmp/itemcf'):
         for file_name in file_list:
             os.remove(os.path.join(path, file_name))
 
@@ -193,7 +193,7 @@ if __name__ == '__main__':
 
 
     df_data = pd.DataFrame()
-    for path, _, file_list in os.walk('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/tmp/itemcf'):
+    for path, _, file_list in os.walk('./user_data/tmp/itemcf'):
         for file_name in file_list:
             df_temp = pd.read_pickle(os.path.join(path, file_name))
             df_data = pd.concat([df_data, df_temp], ignore_index=True)  # 注意是列表形式
@@ -218,6 +218,6 @@ if __name__ == '__main__':
         )
     # 保存召回结果
     if mode == 'valid':
-        df_data.to_pickle('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/offline/recall_itemcf.pkl')
+        df_data.to_pickle('./user_data/data/offline/recall_itemcf.pkl')
     else:
-        df_data.to_pickle('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/online/recall_itemcf.pkl')
+        df_data.to_pickle('./user_data/data/online/recall_itemcf.pkl')

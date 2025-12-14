@@ -16,12 +16,33 @@ signal.signal(signal.SIGINT, multitasking.killall)
 
 
 class Logger(object):
+    """
+    日志记录器类
+    
+    作用:
+    1. 同时将日志输出到控制台和文件
+    2. 记录训练/召回过程中的关键信息(参数、进度、指标等)
+    3. 方便调试和追踪实验结果
+    
+    使用示例:
+        log = Logger('train.log').logger
+        log.info('训练开始')
+        log.debug(f'学习率: {lr}')
+        log.error('发生错误')
+    
+    日志级别(从低到高):
+        debug: 详细调试信息
+        info: 一般信息(默认)
+        warning: 警告信息
+        error: 错误信息
+        crit: 严重错误
+    """
     level_relations = {
-        'debug': logging.DEBUG,
-        'info': logging.INFO,
-        'warning': logging.WARNING,
-        'error': logging.ERROR,
-        'crit': logging.CRITICAL
+        'debug': logging.DEBUG,      # 10 - 调试信息
+        'info': logging.INFO,         # 20 - 一般信息
+        'warning': logging.WARNING,   # 30 - 警告
+        'error': logging.ERROR,       # 40 - 错误
+        'crit': logging.CRITICAL      # 50 - 严重错误
     }
 
     def __init__(
@@ -30,17 +51,38 @@ class Logger(object):
         level='debug',
         fmt='%(asctime)s - %(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s'
     ):
+        """
+        初始化日志记录器
+        
+        参数:
+            filename (str): 日志文件路径
+                           例: 'user_data/log/train_youtube_dnn.log'
+            level (str): 日志级别,默认'debug'
+                        只记录>=该级别的日志
+            fmt (str): 日志格式
+                      %(asctime)s: 时间 (2025-12-12 10:30:45)
+                      %(pathname)s: 文件路径
+                      %(lineno)d: 行号
+                      %(levelname)s: 日志级别 (INFO/DEBUG/ERROR等)
+                      %(message)s: 日志消息内容
+        """
         self.logger = logging.getLogger(filename)
         format_str = logging.Formatter(fmt)
         self.logger.setLevel(self.level_relations.get(level))
 
+        # ========== 输出到控制台 (StreamHandler) ==========
+        # 让日志在终端实时显示
         sh = logging.StreamHandler()
         sh.setFormatter(format_str)
 
+        # ========== 输出到文件 (FileHandler) ==========
+        # 将日志永久保存到文件,mode='a'表示追加模式
         th = logging.FileHandler(filename=filename, encoding='utf-8', mode='a')
         th.setFormatter(format_str)
-        self.logger.addHandler(sh)
-        self.logger.addHandler(th)
+        
+        # 添加两个处理器: 同时输出到控制台和文件
+        self.logger.addHandler(sh)  # 添加控制台输出
+        self.logger.addHandler(th)  # 添加文件输出
 
 
 def reduce_mem_usage(df, verbose=True):
@@ -166,9 +208,9 @@ def gen_sub_multitasking(test_users, prediction, all_articles, worker_id):
 
         lines.append([test_user] + items)
 
-    os.makedirs('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/tmp/sub', exist_ok=True)
+    os.makedirs('./user_data/tmp/sub', exist_ok=True)
 
-    with open(f'/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/tmp/sub/{worker_id}.pkl', 'wb') as f:
+    with open(f'./user_data/tmp/sub/{worker_id}.pkl', 'wb') as f:
         pickle.dump(lines, f)
 
 
@@ -179,7 +221,7 @@ def gen_sub(prediction):
 
     all_articles = set(prediction['article_id'].values)
 
-    sub_sample = pd.read_csv('/home/wangtiantian/shikainan/newswork/data/testA_click_log.csv')
+    sub_sample = pd.read_csv('./data/testA_click_log.csv')
     test_users = sub_sample.user_id.unique()
 
     n_split = max_threads
@@ -187,7 +229,7 @@ def gen_sub(prediction):
     n_len = total // n_split
 
     # 清空临时文件夹
-    for path, _, file_list in os.walk('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/tmp/sub'):
+    for path, _, file_list in os.walk('./user_data/tmp/sub'):
         for file_name in file_list:
             os.remove(os.path.join(path, file_name))
 
@@ -198,7 +240,7 @@ def gen_sub(prediction):
     multitasking.wait_for_tasks()
 
     lines = []
-    for path, _, file_list in os.walk('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/tmp/sub'):
+    for path, _, file_list in os.walk('./user_data/tmp/sub'):
         for file_name in file_list:
             with open(os.path.join(path, file_name), 'rb') as f:
                 line = pickle.load(f)

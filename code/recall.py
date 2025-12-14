@@ -37,8 +37,8 @@ mode = args.mode
 logfile = args.logfile
 
 # 初始化日志
-os.makedirs('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/log', exist_ok=True)
-log = Logger(f'/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/log/{logfile}').logger
+os.makedirs('./user_data/log', exist_ok=True)
+log = Logger(f'./user_data/log/{logfile}').logger
 log.info(f'召回合并: {mode}')
 
 
@@ -95,15 +95,15 @@ def recall_result_sim(df1_, df2_):
 
 if __name__ == '__main__':
     if mode == 'valid':
-        df_click = pd.read_pickle('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/offline/click.pkl')
-        df_query = pd.read_pickle('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/offline/query.pkl')
+        df_click = pd.read_pickle('./user_data/data/offline/click.pkl')
+        df_query = pd.read_pickle('./user_data/data/offline/query.pkl')
 
-        recall_path = '/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/offline'
+        recall_path = './user_data/data/offline'
     else:
-        df_click = pd.read_pickle('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/online/click.pkl')
-        df_query = pd.read_pickle('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/online/query.pkl')
+        df_click = pd.read_pickle('./user_data/data/online/click.pkl')
+        df_query = pd.read_pickle('./user_data/data/online/query.pkl')
 
-        recall_path = '/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/online'
+        recall_path = './user_data/data/online'
 
     log.debug(f'max_threads {max_threads}')
 
@@ -202,6 +202,6 @@ if __name__ == '__main__':
 
     # 保存到本地
     if mode == 'valid':
-        df_useful_recall.to_pickle('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/offline/recall.pkl')
+        df_useful_recall.to_pickle('./user_data/data/offline/recall.pkl')
     else:
-        df_useful_recall.to_pickle('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/online/recall.pkl')
+        df_useful_recall.to_pickle('./user_data/data/online/recall.pkl')
