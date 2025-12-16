@@ -1,0 +1,93 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "1. 处理数据 (data.py)",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/code/data.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--mode", "valid",
+                "--logfile", "debug.log"
+            ]
+        },
+        {
+            "name": "2. Youtube DNN 召回 (recall_DNN.py)",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/code/recall_DNN.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--mode", "valid",
+                "--logfile", "debug.log"
+            ]
+        },
+        {
+            "name": "3. ItemCF 召回 (recall_itemcf.py)",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/code/recall_itemcf.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--mode", "valid",
+                "--logfile", "debug.log"
+            ]
+        },
+        {
+            "name": "4. BiNetwork 召回 (recall_binetwork.py)",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/code/recall_binetwork.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--mode", "valid",
+                "--logfile", "debug.log"
+            ]
+        },
+        {
+            "name": "5. W2V 召回 (recall_w2v.py)",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/code/recall_w2v_debug.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--mode", "valid",
+                "--logfile", "debug.log"
+            ]
+        },
+        {
+            "name": "6. 召回合并 (recall.py)",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/code/recall.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--mode", "valid",
+                "--logfile", "debug.log"
+            ]
+        },
+        {
+            "name": "7. 排序特征 (rank_feature.py)",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/code/rank_feature.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--mode", "valid",
+                "--logfile", "debug.log"
+            ]
+        },
+        {
+            "name": "8. LGB 模型训练 (rank_lgb.py)",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/code/rank_lgb.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--mode", "valid",
+                "--logfile", "debug.log"
+            ]
+        }
+    ]
+}
