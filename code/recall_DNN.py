@@ -42,8 +42,8 @@ args = parser.parse_args()
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
 # 初始化日志
-os.makedirs('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/log', exist_ok=True)
-log = Logger(f'/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/log/{args.logfile}').logger
+os.makedirs('./user_data/log', exist_ok=True)
+log = Logger(f'./user_data/log/{args.logfile}').logger
 log.info(f'YouTube DNN召回开始，mode: {args.mode}, device: {device}')
 log.info(f'召回参数: {vars(args)}')
 
@@ -326,13 +326,13 @@ def batch_recall_optimized(df_query, model, user_encoder, item_encoder,
 def main():
     # 数据路径设置
     if args.mode == 'valid':
-        data_path = '/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/offline'
-        model_dir = '/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/model/offline'
-        output_path = '/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/offline/recall_youtube_dnn.pkl'
+        data_path = './user_data/data/offline'
+        model_dir = './user_data/model/offline'
+        output_path = './user_data/data/offline/recall_youtube_dnn.pkl'
     else:
-        data_path = '/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/online'
-        model_dir = '/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/model/online'
-        output_path = '/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/online/recall_youtube_dnn.pkl'
+        data_path = './user_data/data/online'
+        model_dir = './user_data/model/online'
+        output_path = './user_data/data/online/recall_youtube_dnn.pkl'
     
     # 加载模型
     try:

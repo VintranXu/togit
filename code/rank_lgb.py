@@ -183,8 +183,8 @@ def train_model(df_feature, df_query):
     # 生成提交文件
     df_sub = gen_sub(prediction)
     df_sub.sort_values(['user_id'], inplace=True)
-    os.makedirs('/home/wangtiantian/shikainan/newscommemder/top2wk/prediction_result', exist_ok=True)
-    df_sub.to_csv(f'/home/wangtiantian/shikainan/newscommemder/top2wk/prediction_result/result.csv', index=False)
+    os.makedirs('./prediction_result', exist_ok=True)
+    df_sub.to_csv('./prediction_result/result.csv', index=False)
 
 def predict_with_saved_models(df_feature, df_query=None):
     """

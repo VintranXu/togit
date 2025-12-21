@@ -12,6 +12,12 @@ python code/recall_binetwork.py --mode valid --logfile "${time}.log"
 # w2v 召回
 python code/recall_w2v.py --mode valid --logfile "${time}.log"
 
+# youtubednn 召回
+python trainmodel/trainDNN.py --mode valid --logfile "${time}.log"
+
+# youtubednn 召回
+python code/recall_DNN.py --mode valid --logfile "${time}.log"
+
 # 召回合并
 python code/recall.py --mode valid --logfile "${time}.log"
 

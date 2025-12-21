@@ -1,6 +1,29 @@
 {
     "version": "0.2.0",
     "configurations": [
+
+        {
+            "name": "0. 训练DNN (trainDNN.py)",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/trainmodel/trainDNN.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--mode", "valid",
+                "--logfile", "debug.log"
+            ]
+        },
+        {
+            "name": "0. 训练DIEN (trainDIEN.py)",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/trainmodel/trainDIEN.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--mode", "valid",
+                "--logfile", "debug.log"
+            ]
+        },
         {
             "name": "1. 处理数据 (data.py)",
             "type": "python",
@@ -71,11 +94,11 @@
             "name": "7. 排序特征 (rank_feature.py)",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/code/rank_feature.py",
+            "program": "${workspaceFolder}/code/rank_feature_debug.py",
             "console": "integratedTerminal",
             "args": [
                 "--mode", "valid",
-                "--logfile", "debug.log"
+                "--logfile", "debug.log",
             ]
         },
         {

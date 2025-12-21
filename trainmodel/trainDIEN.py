@@ -53,8 +53,8 @@ mode = args.mode
 logfile = args.logfile
 
 # 初始化日志
-os.makedirs('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/log', exist_ok=True)
-log = Logger(f'/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/log/{logfile}').logger
+os.makedirs('./user_data/log', exist_ok=True)
+log = Logger(f'./user_data/log/{logfile}').logger
 log.info(f'DIEN 精排训练，mode: {mode}')
 
 # 设置设备
@@ -433,7 +433,7 @@ def train_model(df_feature, df_query, df_click):
                 early_stop_counter = 0
                 # 保存最佳模型
                 torch.save(model.state_dict(), 
-                          f'/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/model/real_dien_fold{fold_id}.pth')
+                          f'./user_data/model/real_dien_fold{fold_id}.pth')
             else:
                 early_stop_counter += 1
                 if early_stop_counter >= early_stop_patience:
@@ -442,7 +442,7 @@ def train_model(df_feature, df_query, df_click):
         
         # 加载最佳模型进行预测
         model.load_state_dict(torch.load(
-            f'/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/model/real_dien_fold{fold_id}.pth'))
+            f'./user_data/model/real_dien_fold{fold_id}.pth'))
         model.eval()
         
         # 验证集预测
@@ -491,7 +491,7 @@ def train_model(df_feature, df_query, df_click):
             'scaler': scaler,
             'numeric_cols': numeric_cols,
             'user_history_sample': dict(list(user_history.items())[:100])  # 保存部分历史作为样例
-        }, f'/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/model/real_dien_metadata_fold{fold_id}.pkl')
+        }, f'./user_data/model/real_dien_metadata_fold{fold_id}.pkl')
         
         # 清理内存
         del model, train_dataset, val_dataset, test_dataset
@@ -515,20 +515,20 @@ def train_model(df_feature, df_query, df_click):
     # 生成提交文件
     df_sub = gen_sub(prediction)
     df_sub.sort_values(['user_id'], inplace=True)
-    os.makedirs('/home/wangtiantian/shikainan/newscommemder/top2wk/prediction_result', exist_ok=True)
-    df_sub.to_csv(f'/home/wangtiantian/shikainan/newscommemder/top2wk/prediction_result/real_dien_result.csv', index=False)
+    os.makedirs('./prediction_result', exist_ok=True)
+    df_sub.to_csv(f'./prediction_result/real_dien_result.csv', index=False)
     log.info('DIEN精排结果保存完成!')
 
 
 if __name__ == '__main__':
     # 确保模型保存目录存在
-    os.makedirs('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/model', exist_ok=True)
+    os.makedirs('./user_data/model', exist_ok=True)
     
     if mode == 'valid':
         # 加载特征数据、查询数据和点击数据
-        df_feature = pd.read_pickle('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/offline/feature.pkl')
-        df_query = pd.read_pickle('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/offline/query.pkl')
-        df_click = pd.read_pickle('/home/wangtiantian/shikainan/newscommemder/top2wk/user_data/data/offline/click.pkl')
+        df_feature = pd.read_pickle('./user_data/data/offline/feature.pkl')
+        df_query = pd.read_pickle('./user_data/data/offline/query.pkl')
+        df_click = pd.read_pickle('./user_data/data/offline/click.pkl')
         
         log.info(f"加载数据: 特征={df_feature.shape}, 查询={df_query.shape}, 点击={df_click.shape}")
         
